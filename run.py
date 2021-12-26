@@ -1,6 +1,5 @@
 from nextcord_tortoise import attach_argparse_group
 import argparse
-import _asyncio
 parser = argparse.ArgumentParser(description="Discord Bot")
 attach_argparse_group(parser)
 args = parser.parse_args()
