@@ -1,9 +1,10 @@
 from nextcord.abc import GuildChannel
 from nextcord.ext import commands
-from nextcord import Guild, Member, User
-from nextcord_tortoise import Bot as TortoiseBot
+from nextcord import Guild, Member, User, DMChannel
+from nextcord.ext import commands
+from nextcord.errors import Forbidden, HTTPException
 
-class BotBaseBot(TortoiseBot):
+class BotBaseBot(commands.Bot):
     async def get_or_fetch_guild(self, guild_id: int) -> Guild:
         """Looks up a guild in cache or fetches if not found."""
         guild = self.get_guild(guild_id)
@@ -58,3 +59,16 @@ class BotBaseBot(TortoiseBot):
             return False
 
         return channel 
+    
+    async def get_user_dm(self, user_id: int) -> DMChannel:
+        try:
+            user = await self.bot.get_or_fetc_user(user_id)
+            if user:
+                try:
+                    await user.send("This is a test message to test if I can DM you or not, Please ignore this, Thanks!")
+                    return True
+                except:
+                    return False
+        except:
+            return False
+        return False

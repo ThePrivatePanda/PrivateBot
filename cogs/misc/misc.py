@@ -43,7 +43,7 @@ class Misc(commands.Cog):
         if ctx.author.id == self.bot.owner_id:
             guild = self.bot.get_guild(self.bot.config["home_server"])
 
-        emoji = await guild.create_custom_emoji(name=emoji.name, image=file, reason="stole an emoji kek")
+        emoji = await guild.create_custom_emoji(name=f"m_{emoji.name}", image=file, reason="stole an emoji kek")
 
         try:
             await ctx.message.add_reaction(emoji)

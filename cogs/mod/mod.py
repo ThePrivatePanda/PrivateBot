@@ -17,7 +17,7 @@ class Moderation(commands.Cog):
             return await ctx.send(embed=nextcord.Embed(title="Error!", description="Ask someone higher than you to ban you.", colour=nextcord.colour.red()))
 
         if user in ctx.guild.members:
-            if ctx.author.top_role < user.top_role or ctx.author.top_role == user.top_role:
+            if ctx.author.top_role <= user.top_role:
                 return await ctx.send(embed=nextcord.Embed(title="Error!", description="You are not high enough in the role hierarchy to ban them.", colour=nextcord.colour.red()))
 
         if reason is None:
@@ -32,43 +32,42 @@ class Moderation(commands.Cog):
 
         em=nextcord.Embed(
             title="You were banned!",
-            description=f"You were banned from `{ctx.guild.name}` ({ctx.guild.id}) for reason:\n{reason}\nAppeals server link: {self.bot.appeal_link}",
+            description=f"You were banned from `{ctx.guild.name}` ({ctx.guild.id}) for reason:\n{reason}\nAppeals server link: {self.bot.appeal_server_invite}",
             colour = nextcord.Colour.red())
         em.set_footer(
-            icon_url=ctx.guild.icon_url)
+            icon_url=ctx.guild.icon.url)
         em.timestamp = nextcord.utils.utcnow()
 
-        await self.bot.get_user_dm().send(embed=em)
+        user_dm = await self.bot.get_user_dm()
+        if user_dm:
+            await user.send(embed=em)
         return await ctx.send(embed=nextcord.Embed(title="Success!", description=f"Banned `{user.name}` ({user.id}) for: {reason}", colour=nextcord.colour.green()))
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
-    async def softban(self, ctx, user: nextcord.user, delete_days=None):
-
-        if delete_days is None:
-            delete_days = 3
+    async def softban(self, ctx, user: nextcord.user, delete_days: int = 3):
 
         if user in ctx.guild.members:
-            if ctx.author.top_role < user.top_role or ctx.author.top_role == user.top_role:
+            if ctx.author.top_role <= user.top_role:
                 return await ctx.send(embed=nextcord.Embed(title="Error!", description="They are too high in the role hierarchy for you to ban them.", colour=nextcord.colour.red))
 
         try:
-            await ctx.guild.ban(user, reason=f"{ctx.author.name} ({ctx.author.id}) banned {user.name} ({user.id}) to clear the last {delete_days} days messages of the user", delete_days=delete_days)
-            await ctx.guild.unban(user, "Softban over.")
+            await ctx.guild.ban(user, reason=f"{ctx.author.name} ({ctx.author.id}) banned {user.name} ({user.id}) to clear the last {delete_days} days messages of the user.", delete_days=delete_days)
+            await ctx.guild.unban(user, reason="Softban over.")
         except Forbidden:
             return await ctx.send(embed=nextcord.Embed(title="Error!", description="You are not allowed to ban them!", colour=nextcord.colour.red))
         except HTTPException:
             return await ctx.send(embed=nextcord.Embed(title="Error!", description="Some error occured, try again.", colour=nextcord.colour.red))
 
         em=nextcord.Embed(
-            title="You were banned!",
-            description=f"You were banned from `{ctx.guild.name}` ({ctx.guild.id}) to clear the last {delete_days} days messages from you. \nsUse this link to join back <SERVER INVITE LINK>",
+            title="You were banned (and unbanned)!",
+            description=f"You were banned from `{ctx.guild.name}` ({ctx.guild.id}) to clear the last {delete_days} days messages from you. \nsUse this link to join back: {self.bot.main_server_invite)",
             colour = nextcord.Colour.blue())
         em.set_footer(
             icon_url=ctx.guild.icon_url)
         em.timestamp = nextcord.utils.utcnow()
-        
+
         await ctx.send(embed=em)
         return await ctx.send(embed=nextcord.Embed(title="Success!", description=f"SoftBanned `{user.name}` ({user.id}) to clear the last {delete_days} days messages of the user.\n**User has been unbanned.**", colour=nextcord.colour.green))
 
@@ -80,6 +79,14 @@ class Moderation(commands.Cog):
         muted_till = nextcord.utils.format_dt(datetime_instance, "F")
         await member.edit(timeout=muted_till)
         await member.send(f'You have been muted in `` for ``. Automatic Unmute on .')
+        await ctx.channel.send(f"`` has been muted for ``, Automatic Unmute on ")
+
+    @commands.command(name="untimeout", aliases=["unmute","un-mute", "un-timeout"])
+    @commands.has_permissions(moderate_members=True)
+    @commands.bot_has_permissions(moderate_members=True)
+    async def un_timeout(ctx, member: nextcord.Member):
+        await member.edit(timeout=None)
+        await member.send(f'You have been unmuted in `` for ``. Automatic Unmute on .')
         await ctx.channel.send(f"`` has been muted for ``, Automatic Unmute on ")
 
 def setup(bot):
