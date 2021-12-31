@@ -1,4 +1,7 @@
+from typing import Union
+from nextcord.channel import TextChannel
 from nextcord.ext import commands
+import asyncio
 
 class AFK(commands.Cog):
 
@@ -21,15 +24,33 @@ class AFK(commands.Cog):
         if id in await self.get_afk_users():
             await self.remove_afk(ctx.author.id)
         await self.write_afk(ctx.author.id, message)
+        await ctx.send(f"{ctx.author.mention} set afk with: {message}")
 
     @commands.command(name="afk")
     async def afk_(self, ctx, msg="For some reason."):
-        try:
-            if await self.go_afk(ctx, msg):
-                await ctx.send(f"{ctx.author.mention} set afk with: {msg}")
-        except Exception as e:
-            await ctx.send(e)
+        await self.go_afk(ctx, msg)
 
+    @commands.group()
+    async def afk():
+        pass
+
+    @afk.command(name="ignore")
+    async def afk_ignore(self, channel: TextChannel):
+        self.bot.afk_ignored_channels.append(channel.id)
+
+    @commands.Cog.listener()
+    async def on_message(self, msg):
+        if not msg.mentions:
+            return
+        if msg.channel.id in self.bot.afk_ignored_channels:
+            return
+
+        afk_users = await self.get_afk_users()
+        temp_message = ""
+        for user in msg.mentions:
+            if user.id in afk_users:
+                temp_message += f"{user.name} is afk with reason: {await self.get_afk_message(user.id)}\n"
+        await msg.reply(temp_message)
 
 def setup(bot):
     bot.add_cog(AFK(bot))
