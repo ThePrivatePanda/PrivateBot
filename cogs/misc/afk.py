@@ -3,6 +3,8 @@ from nextcord.channel import TextChannel
 from nextcord.ext import commands
 import asyncio
 
+from nextcord.ext.commands.flags import Flag
+
 class AFK(commands.Cog):
 
     def __init__(self, bot):
@@ -26,17 +28,15 @@ class AFK(commands.Cog):
         await self.write_afk(ctx.author.id, message)
         await ctx.send(f"{ctx.author.mention} set afk with: {message}")
 
-    @commands.command(name="afk")
-    async def afk_(self, ctx, msg="For some reason."):
+    @commands.group(invoke_without_command=True)
+    async def afk(self, ctx, msg="kk"):
         await self.go_afk(ctx, msg)
-
-    @commands.group()
-    async def afk():
-        pass
+        await ctx.send("Done hai")
 
     @afk.command(name="ignore")
-    async def afk_ignore(self, channel: TextChannel):
+    async def afk_ignore(self, ctx, channel: TextChannel):
         self.bot.afk_ignored_channels.append(channel.id)
+        await ctx.send('done done hai')
 
     @commands.Cog.listener()
     async def on_message(self, msg):
