@@ -1,3 +1,4 @@
+import nextcord
 from nextcord.abc import GuildChannel
 from nextcord.ext import commands
 from nextcord import Guild, Member, User, DMChannel
@@ -72,3 +73,6 @@ class BotBaseBot(commands.Bot):
         except:
             return False
         return False
+    
+    async def WrapStuff(self, stuff):
+        pass

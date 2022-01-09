@@ -14,13 +14,15 @@ class AFK(commands.Cog):
         return [i[0] for i in await (await self.bot.db.execute("SELECT id FROM afk")).fetchall()]
 
     async def get_afk_message(self, id):
-        return (await (await self.bot.db.execute(f"SELECT msg FROM afk WHERE id IS {id}")).fetchone())[0]
+        return (await (await self.bot.db.execute(f"SELECT msg FROM afk WHERE id = ?", (id, ))).fetchone())[0]
 
     async def write_afk(self, id, message):
-        await self.bot.db.execute(f"INSERT INTO afk (id, msg) VALUES({id}, {message})")
+        await self.bot.db.execute("INSERT INTO afk (id, msg) VALUES(?, ?)", (id, message))
+        await self.bot.db.commit()
 
     async def remove_afk(self, id):
-        await self.bot.db.execute(f"DELTE FROM afk WHERE id IS {id}")
+        await self.bot.db.execute("DELTE FROM afk WHERE id = ?", (id, ))
+        await self.bot.db.commit()
 
     async def go_afk(self, ctx, message):
         if id in await self.get_afk_users():
@@ -40,6 +42,8 @@ class AFK(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, msg):
+        if not msg.author.bot:
+            return
         if not msg.mentions:
             return
         if msg.channel.id in self.bot.afk_ignored_channels:
@@ -50,6 +54,7 @@ class AFK(commands.Cog):
         for user in msg.mentions:
             if user.id in afk_users:
                 temp_message += f"{user.name} is afk with reason: {await self.get_afk_message(user.id)}\n"
+
         await msg.reply(temp_message)
 
 def setup(bot):

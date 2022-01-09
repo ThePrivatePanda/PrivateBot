@@ -6,29 +6,24 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="ban")
-    @commands.has_permissions(ban_members=True)
-    @commands.bot_has_permissions(ban_members=True)
-    async def ban(self, ctx, user: nextcord.User, *, reason=None):
+    async def bon(self, stuff, user: nextcord.User, *, reason="No reason."):
+        myctx = self.bot.WrapStuff(stuff)
         if user.id == self.bot.user.id:
-            return await ctx.send("Simply: No.")
+            return await myctx.send("Simply: No.")
 
-        if user.id == ctx.author.id:
-            return await ctx.send(embed=nextcord.Embed(title="Error!", description="Ask someone higher than you to ban you.", colour=nextcord.colour.red()))
+        if user.id == myctx.author.id:
+            return await myctx.send("Ask someone higher than you to ban you.")
 
-        if user in ctx.guild.members:
-            if ctx.author.top_role <= user.top_role:
-                return await ctx.send(embed=nextcord.Embed(title="Error!", description="You are not high enough in the role hierarchy to ban them.", colour=nextcord.colour.red()))
-
-        if reason is None:
-            reason = "No reason specified."
+        if user in myctx.guild.members:
+            if myctx.author.top_role <= user.top_role:
+                return await myctx.send("You are not high enough in the role hierarchy to ban them.")
 
         try:
-            await ctx.guild.ban(user, reason=f"{ctx.author.name} ({ctx.author.id}) banned {user.name} ({user.id}) for: {reason}")
+            await myctx.guild.ban(user, reason=f"{myctx.author.name} ({ctx.author.id}) banned {user.name} ({user.id}) for: {reason}")
         except Forbidden:
-            return await ctx.send(embed=nextcord.Embed(title="Error!", description="You are not allowed to ban them!", colour=nextcord.colour.red()))
+            return await ctx.send("You are not allowed to ban them!")
         except HTTPException:
-            return await ctx.send(embed=nextcord.Embed(title="Error!", description="Some error occured, try again.", colour=nextcord.colour.red()))
+            return await ctx.send("Some error occured, try again.")
 
         em=nextcord.Embed(
             title="You were banned!",
@@ -42,6 +37,11 @@ class Moderation(commands.Cog):
         if user_dm:
             await user.send(embed=em)
         return await ctx.send(embed=nextcord.Embed(title="Success!", description=f"Banned `{user.name}` ({user.id}) for: {reason}", colour=nextcord.colour.green()))
+
+    @commands.command(name="ban")
+    @commands.has_permissions(ban_members=True)
+    @commands.bot_has_permissions(ban_members=True)
+    async def ban(self, ctx, user: nextcord.User, *, reason="No reason."):
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
@@ -62,10 +62,9 @@ class Moderation(commands.Cog):
 
         em=nextcord.Embed(
             title="You were banned (and unbanned)!",
-            description=f"You were banned from `{ctx.guild.name}` ({ctx.guild.id}) to clear the last {delete_days} days messages from you. \nsUse this link to join back: {self.bot.main_server_invite)",
-            colour = nextcord.Colour.blue())
-        em.set_footer(
-            icon_url=ctx.guild.icon_url)
+            description=f"You were banned from `{ctx.guild.name}` ({ctx.guild.id}) to clear the last {delete_days} days messages from you. \nsUse this link to join back: {self.bot.main_server_invite}",
+            colour = nextcord.Colour.blue()).set_footer(
+                icon_url=ctx.guild.icon_url)
         em.timestamp = nextcord.utils.utcnow()
 
         await ctx.send(embed=em)
