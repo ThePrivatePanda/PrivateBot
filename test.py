@@ -1,6 +1,7 @@
 from nextcord import member
 from nextcord.ext import commands
 import nextcord
+import config
 
 bot = commands.Bot(
     command_prefix=".",
@@ -38,4 +39,4 @@ async def on_message_edit(before, after):
     await after.channel.send(str(after.thread))
 
 
-bot.run("Nzc5NjM3NDQwMjkzODk2MTkz.X7jb8g.qHxl3bRz0elWOjMNWXwaq6FmWf0")
+bot.run(config.token)
