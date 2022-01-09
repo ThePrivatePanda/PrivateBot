@@ -13,7 +13,7 @@ from BotBase import BotBaseBot
 import nextcord
 
 
-cogs = ["Fun.animals", "misc.afk", "test.test", "test.regularcmd", "test.slashcmd"]
+cogs = ["Fun.animals", "misc.afk", "test.test", "test.regularcmd", "test.slashcmd", "jishaku"]
 
 
 bot = BotBaseBot(
