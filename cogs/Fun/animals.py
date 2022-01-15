@@ -29,14 +29,12 @@ class animals(commands.Cog):
         ],
     )
     async def get_animal_randomapi(self, ctx):
-        something = await self.randomapi_animal(
-            ctx.message.replace("!!", "").split(" ")[0]
-        )
+        something = await self.randomapi_animal(ctx.message.content.replace(".", ""))
         return await ctx.send(
             embed=Embed(
-                description=something[0],
+                description=something[1],
                 color=Colour(random.randint(0, 255)),
-                image=something[1],
+                image=something[0],
             )
         )
 
