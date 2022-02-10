@@ -1,3 +1,16 @@
-token = "Token"
+token = ""
 prefix = "."
-home_server = 000 # put your private home server id here, this is where stolen emotes will be uploaded
+home_server = 123  # put your private home server id here, this is where stolen emotes will be uploaded
+appeal_server_invite = ""
+main_server_invite = ""
+owners = [123]
+crosstalk = [
+    123,
+    456,
+    789,
+    101,
+]
+kucoin_api_key = "abc"
+kucoin_api_secret = "def"
+kucoin_api_passphrase = "ghi"
+owner_id = 000

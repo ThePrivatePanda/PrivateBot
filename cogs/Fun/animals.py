@@ -34,8 +34,7 @@ class animals(commands.Cog):
             embed=Embed(
                 description=something[1],
                 color=Colour(random.randint(0, 255)),
-                image=something[0],
-            )
+            ).set_image(url=something[0])
         )
 
     @commands.command(name="bunny")
