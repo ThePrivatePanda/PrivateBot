@@ -6,6 +6,8 @@ class CustomMessageLogger(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        if message.channel.id != 938310464591523882:
+            return
         my_webhook = await self.bot.message_logger.create_webhook(
                     name=message.author.name,
                     avatar=(await message.author.avatar.read()),
