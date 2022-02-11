@@ -1,9 +1,8 @@
-import nextcord
 from nextcord.abc import GuildChannel
 from nextcord.ext import commands
 from nextcord import Guild, Member, User, DMChannel
 from nextcord.ext import commands
-from nextcord.errors import Forbidden, HTTPException
+
 
 class BotBaseBot(commands.Bot):
     async def get_or_fetch_guild(self, guild_id: int) -> Guild:
@@ -52,27 +51,29 @@ class BotBaseBot(commands.Bot):
         """Looks up a channel in cache or fetches if not found."""
         channel = self.get_channel(channel_id)
         if channel:
-            return channel 
+            return channel
 
         try:
             channel = await self.fetch_channel(channel_id)
         except:
             return False
 
-        return channel 
-    
-    async def get_user_dm(self, user_id: int) -> DMChannel:
+        return channel
+
+    async def get_user_dm(self, user_id: int, *args, **kwargs) -> DMChannel:
         try:
             user = await self.bot.get_or_fetc_user(user_id)
             if user:
                 try:
-                    await user.send("This is a test message to test if I can DM you or not, Please ignore this, Thanks!")
+                    await user.send(
+                        *args, **kwargs
+                    )
                     return True
                 except:
                     return False
         except:
             return False
         return False
-    
+
     async def WrapStuff(self, stuff):
         pass
