@@ -9,7 +9,7 @@ import aiosqlite
 
 
 class BotBaseBot(commands.Bot):
-    def __init__(self, *args, **kwargs):
+    async def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # bot vars
         self.prefix = config.prefix
