@@ -1,8 +1,13 @@
 ## <h1 align="center">PrivateBot for Discord</h1>
 
 ### **From the Developer:**
-Hey there! I am koala, or the koala, the current sole developer of this bot.\
-Considering I am bad at programming, this is meant to be a single-server discord bot, not meant to support several servers, so I highly appreciate even the tiniest of contributions.
+Hey there! I am koala, or the koala, the current sole developer of this bot.
+This bot was made almost entirely for my own education purposes, as well as me wanting to do something "big" rather than singular projects.  
+I.e. slap them all in a single bot.
+
+I do not actively maintain it however I do welcome contributions.
+Due to the same reason, this bot theoretically does not support multi-server config, but it should work fine I geuss?
+
 You can contact me on discord at `Koala#9712`
 ### **Features:**
 - Current:
