@@ -19,29 +19,30 @@ class Moderation(commands.Cog):
                 return await myctx.send("You are not high enough in the role hierarchy to ban them.")
 
         try:
-            await myctx.guild.ban(user, reason=f"{myctx.author.name} ({ctx.author.id}) banned {user.name} ({user.id}) for: {reason}")
+            await myctx.guild.ban(user, reason=f"{myctx.author.name} ({myctx.author.id}) banned {user.name} ({user.id}) for: {reason}")
         except Forbidden:
-            return await ctx.send("You are not allowed to ban them!")
+            return await myctx.send("You are not allowed to ban them!")
         except HTTPException:
-            return await ctx.send("Some error occured, try again.")
+            return await myctx.send("Some error occured, try again.")
 
         em=nextcord.Embed(
             title="You were banned!",
-            description=f"You were banned from `{ctx.guild.name}` ({ctx.guild.id}) for reason:\n{reason}\nAppeals server link: {self.bot.appeal_server_invite}",
+            description=f"You were banned from `{myctx.guild.name}` ({myctx.guild.id}) for reason:\n{reason}\nAppeals server link: {self.bot.appeal_server_invite}",
             colour = nextcord.Colour.red())
         em.set_footer(
-            icon_url=ctx.guild.icon.url)
+            icon_url=myctx.guild.icon.url)
         em.timestamp = nextcord.utils.utcnow()
 
         user_dm = await self.bot.get_user_dm()
         if user_dm:
             await user.send(embed=em)
-        return await ctx.send(embed=nextcord.Embed(title="Success!", description=f"Banned `{user.name}` ({user.id}) for: {reason}", colour=nextcord.colour.green()))
+        return await myctx.send(embed=nextcord.Embed(title="Success!", description=f"Banned `{user.name}` ({user.id}) for: {reason}", colour=nextcord.colour.green()))
 
     @commands.command(name="ban")
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
     async def ban(self, ctx, user: nextcord.User, *, reason="No reason."):
+        await self.bon(ctx, user, reason=reason)
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
